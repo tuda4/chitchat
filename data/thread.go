@@ -37,3 +37,17 @@ func Threads() (threads []*Thread, err error) {
 	}
 	return
 }
+
+func (thread *Thread) NumReplies() (count int) {
+	rows, err := Db.Query(`SELECT count(*) FROM posts where thread_id = $1`, thread.ID)
+	if err != nil {
+		return
+	}
+	for rows.Next() {
+		if err = rows.Scan(&count); err != nil {
+			return
+		}
+	}
+	rows.Close()
+	return
+}
