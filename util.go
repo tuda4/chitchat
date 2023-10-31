@@ -3,7 +3,9 @@ package main
 import (
 	"chitchat/data"
 	"errors"
+	"fmt"
 	"net/http"
+	"text/template"
 )
 
 func session(w http.ResponseWriter, r *http.Request) (sess *data.Session, err error) {
@@ -15,4 +17,13 @@ func session(w http.ResponseWriter, r *http.Request) (sess *data.Session, err er
 		}
 	}
 	return
+}
+
+func generateHTML(w http.ResponseWriter, data interface{}, fn ...string) {
+	var files []string
+	for _, f := range fn {
+		files = append(files, fmt.Sprintf("templates/%s.html", f))
+	}
+	templates := template.Must(template.ParseFiles(files...))
+	templates.ExecuteTemplate(w, "layout", data)
 }
