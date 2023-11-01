@@ -4,9 +4,15 @@ import (
 	"chitchat/data"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 	"text/template"
+
+	"github.com/goravel/framework/log/logger"
+	"gorm.io/gorm/logger"
 )
+
+var logging *log.Logger
 
 func session(w http.ResponseWriter, r *http.Request) (sess *data.Session, err error) {
 	cookie, err := r.Cookie("_cookie")
@@ -26,4 +32,36 @@ func generateHTML(w http.ResponseWriter, data interface{}, fn ...string) {
 	}
 	templates := template.Must(template.ParseFiles(files...))
 	templates.ExecuteTemplate(w, "layout", data)
+}
+
+func parseTemplateFiles(filenames ...string) (t *template.Template) {
+	var files []string
+	t = template.New("layout")
+	for _, file := range files {
+		files = append(files, fmt.Sprintf("templates/%s.html", file))
+	}
+	t = template.Must(template.ParseFiles(files...))
+
+	return
+}
+
+// logging
+func info(args ...interface{}) {
+	logging.SetPrefix("INFO")
+	logging.Println(args...)
+}
+
+func danger(args ...interface{}) {
+	logging.SetPrefix("ERROR")
+	logging.Println(args...)
+}
+
+func warning(args ...interface{}) {
+	logging.SetPrefix("WARNING")
+	logging.Println(args...)
+}
+
+// version
+func version() string {
+	return "0.1"
 }
