@@ -57,8 +57,25 @@ func (session *Session) Check() (valid bool, err error) {
 	return
 }
 
+func (session *Session) DeleteByUUID() (err error) {
+	err = Db.QueryRow(`DELETE FROM sessions WHERE uuid = $1`, session.Uuid).Scan(&session)
+	return
+}
+
 func UserByEmail(email string) (user *User, err error) {
 	err = Db.QueryRow(`SELECT id, uuid, email, name, password FROM users WHERE email = $1`, email).
 		Scan(&user)
+	return
+}
+
+func (user *User) Create() (err error) {
+	statment := `INSERT INTO users (name, email, password) VALUES $1, $2, $3`
+	stmt, err := Db.Prepare(statment)
+	if err != nil {
+		return
+	}
+	defer stmt.Close()
+
+	err = stmt.QueryRow(createUUID(), user.Name, user.Email, Encrypt(user.Password)).Scan(&user)
 	return
 }
