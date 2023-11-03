@@ -13,6 +13,14 @@ import (
 	"gorm.io/gorm/logger"
 )
 
+type Configuration struct {
+	Address      string
+	ReadTimeout  int64
+	WriteTimeout int64
+	Statis       string
+}
+
+var config Configuration
 var logging *log.Logger
 
 func session(w http.ResponseWriter, r *http.Request) (sess *data.Session, err error) {
