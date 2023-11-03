@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strings"
 	"text/template"
 
 	"github.com/goravel/framework/log/logger"
@@ -64,4 +65,9 @@ func warning(args ...interface{}) {
 // version
 func version() string {
 	return "0.1"
+}
+
+func error_message(w http.ResponseWriter, r *http.Request, msg string) {
+	url := []string{"/err?msg=", msg}
+	http.Redirect(w, r, strings.Join(url, ""), 302)
 }
